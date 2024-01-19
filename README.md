@@ -123,7 +123,7 @@ contract TokenBank is Bank {
             for (uint i = convertedIndex - 3; i > 1; i--) {
                 if (membershipIndex != 0) {
                     if (
-                        tokenBalance[msg.sender] >
+                        tokenBalance[msg.sender] >=
                         tokenBalance[tokenRank[i - 2]]
                     ) {
                         indexRecord = i - 2;
@@ -144,7 +144,9 @@ contract TokenBank is Bank {
         } else {
             // Case 2: msg.sender is not inside the top3 rank.
             for (uint i = 3; i > 0; i--) {
-                if (tokenBalance[msg.sender] > tokenBalance[tokenRank[i - 1]]) {
+                if (
+                    tokenBalance[msg.sender] >= tokenBalance[tokenRank[i - 1]]
+                ) {
                     indexRecord = i - 1;
                     // move backward the element(s) which is(/are) right at the index and also behind the index
                     for (uint j = 2; j > i - 1; j--) {
@@ -203,7 +205,7 @@ contract Bank {
         _handleRankWhenDepositETH();
     }
 
-    receive() external virtual payable {
+    receive() external payable virtual {
         depositETH();
     }
 
@@ -211,7 +213,9 @@ contract Bank {
         payable(owner).transfer(address(this).balance);
     }
 
-    function getETHBalance(address _account) public view virtual returns (uint) {
+    function getETHBalance(
+        address _account
+    ) public view virtual returns (uint) {
         return ETHBalance[_account];
     }
 
@@ -232,7 +236,7 @@ contract Bank {
             convertedIndex = membershipIndex + 4;
             for (uint i = convertedIndex - 3; i > 1; i--) {
                 if (membershipIndex != 0) {
-                    if (ETHBalance[msg.sender] > ETHBalance[rank[i - 2]]) {
+                    if (ETHBalance[msg.sender] >= ETHBalance[rank[i - 2]]) {
                         indexRecord = i - 2;
                         for (uint j = 2; j > i - 2; j--) {
                             rank[j] = rank[j - 1];
@@ -251,7 +255,7 @@ contract Bank {
         } else {
             // Case 2: msg.sender is not inside the top3 rank.
             for (uint i = 3; i > 0; i--) {
-                if (ETHBalance[msg.sender] > ETHBalance[rank[i - 1]]) {
+                if (ETHBalance[msg.sender] >= ETHBalance[rank[i - 1]]) {
                     indexRecord = i - 1;
                     // move backward the element(s) which is(/are) right at the index and also behind the index
                     for (uint j = 2; j > i - 1; j--) {
